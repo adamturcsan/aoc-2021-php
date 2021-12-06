@@ -1,0 +1,11 @@
+{
+    "name": "adamturcsan/adventofcode",
+    "type": "project",
+    "authors": [
+        {
+            "name": "Turcsán Ádám",
+            "email": "turcsan.adam@legow.hu"
+        }
+    ],
+    "require": {}
+}
