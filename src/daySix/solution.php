@@ -1,9 +1,12 @@
 <?php
 
+$startAt = hrtime(true);
 $pool = new FishPool(file_get_contents(__DIR__ . '/input'));
 
 echo "1st solution: " . $pool->simulate(80) . "\n";
 echo "2nd solution: " . $pool->simulate(256) . "\n";
+
+echo "Execution time: " . (hrtime(true) - $startAt)/1000000 . "ms \n";
 
 class FishPool
 {
