@@ -3,6 +3,18 @@
 $pool = new OctopusPool(__DIR__ . '/input');
 
 printf("1st solution: %d \n", $pool->simulateFor(100));
+printf("2nd solution: %d \n", $pool->simulateForSync());
+
+function deepClone(array $octopuses)
+{
+    $newPool = [];
+    foreach ($octopuses as $rowNum => $row) {
+        foreach ($row as $col => $elem) {
+            $newPool[$rowNum][$col] = clone $elem;
+        }
+    }
+    return $newPool;
+}
 
 class OctopusPool
 {
@@ -25,21 +37,10 @@ class OctopusPool
         }
     }
 
-    public function draw(bool $simulation = false): void
-    {
-        foreach (($simulation ? $this->octopusesByLine : $this->simulationPool) as $line) {
-            foreach ($line as $octopus) {
-                echo $octopus->asString();
-            }
-            echo "\n";
-        }
-        echo "\n";
-    }
-
     public function simulateFor(int $steps, bool $shouldDraw = false): int
     {
         $flashes = 0;
-        $this->simulationPool = $this->octopusesByLine;
+        $this->simulationPool = deepClone($this->octopusesByLine);
         if ($shouldDraw) $this->draw();
         foreach (range(1, $steps) as $stepCount) {
             if ($shouldDraw) echo "$stepCount:\n";
@@ -48,6 +49,20 @@ class OctopusPool
         }
         $this->simulationPool = null;
         return $flashes;
+    }
+
+    public function simulateForSync(bool $shouldDraw = false): int
+    {
+        $this->simulationPool = $this->octopusesByLine;
+        if ($shouldDraw) $this->draw();
+        $stepCount = 1;
+        while ($this->simuLateAStep($stepCount) !== 100) {
+            if ($shouldDraw) echo "$stepCount:\n";
+            if ($shouldDraw) $this->draw(true);
+            $stepCount++;
+        }
+        $this->simulationPool = null;
+        return $stepCount;
     }
 
     private function simulateAStep(int $stepNumber, array $pool = null): int
@@ -90,6 +105,17 @@ class OctopusPool
                 ($col + 1) => $this->simulationPool[$row + 1][$col + 1] ?? null,
             ],
         ];
+    }
+
+    private function draw(bool $simulation = false): void
+    {
+        foreach (($simulation ? $this->octopusesByLine : $this->simulationPool) as $line) {
+            foreach ($line as $octopus) {
+                echo $octopus->asString();
+            }
+            echo "\n";
+        }
+        echo "\n";
     }
 }
 
